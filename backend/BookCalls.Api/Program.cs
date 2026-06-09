@@ -7,6 +7,11 @@ using Microsoft.AspNetCore.Diagnostics;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// В проде/Render порт задаётся переменной окружения PORT; локально остаётся профиль launchSettings.
+var port = Environment.GetEnvironmentVariable("PORT");
+if (!string.IsNullOrWhiteSpace(port))
+    builder.WebHost.UseUrls($"http://+:{port}");
+
 const string corsPolicy = "frontend";
 builder.Services.AddCors(options =>
     options.AddPolicy(corsPolicy, policy =>
@@ -45,9 +50,16 @@ app.UseExceptionHandler(errorApp => errorApp.Run(async context =>
     await context.Response.WriteAsJsonAsync(problem);
 }));
 
+// Собранный SPA (frontend/dist) кладётся в wwwroot и отдаётся с того же origin, что и API.
+app.UseDefaultFiles();
+app.UseStaticFiles();
+
 app.UseCors(corsPolicy);
 
 app.MapPublicEndpoints();
 app.MapAdminEndpoints();
+
+// Неизвестные пути (клиентские маршруты React Router) отдают index.html.
+app.MapFallbackToFile("index.html");
 
 app.Run();
