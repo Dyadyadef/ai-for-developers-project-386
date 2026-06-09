@@ -10,7 +10,8 @@
     "preview": "vite preview",
     "generate:api": "openapi-typescript ../typespec/tsp-output/schema/openapi.yaml -o src/api/types.ts",
     "mock": "prism mock ../typespec/tsp-output/schema/openapi.yaml -p 4010",
-    "dev:mock": "concurrently -n mock,vite -c blue,green \"npm run mock\" \"npm run dev\""
+    "dev:mock": "concurrently -n mock,vite -c blue,green \"npm run mock\" \"npm run dev\"",
+    "dev:real": "concurrently -n api,vite -c blue,green \"dotnet run --project ../backend/BookCalls.Api\" \"vite\""
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.15",
